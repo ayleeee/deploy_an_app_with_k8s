@@ -73,7 +73,7 @@ docker run -p 8999:8999 springapp:latest
 minikube start
 ```
 
-### 배포 생성
+### Deployment 생성
 
 ```bash
 kubectl create deployment springapp --image=angielee123/springapp:1.0 --replicas=3
