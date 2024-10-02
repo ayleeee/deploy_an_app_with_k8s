@@ -1,6 +1,6 @@
 # Kubernetes를 활용한 애플리케이션 배포
 
-이 문서는 Spring Boot 애플리케이션의 Docker 이미지 생성부터 Docker Hub 업로드 및 Minikube를 활용한 Kubernetes 클러스터 배포까지의 전체 과정을 설명합니다.
+이 문서는 Spring Boot 애플리케이션의 Docker 이미지 생성부터 Docker Hub 업로드 및 Minikube를 활용한 Kubernetes 클러스터 배포까지의 과정을 다룬다.
 
 
 ## 1단계: Docker 이미지 생성
@@ -94,6 +94,7 @@ minikube tunnel
 ```
 
 이후, 생성된 외부 IP와 포트를 포트포워딩하여 접근 가능하게 만들기.
+![image](https://github.com/user-attachments/assets/8eb66488-215a-42b5-95b4-bce90ed1a0ce)
+![image](https://github.com/user-attachments/assets/b3c0fb89-50a1-44db-b81a-6a3ffddffd5d)
 
-![kubernetes-deployment](https://github.com/user-attachments/assets/8ae6b58d-e038-4541-b39b-6077e95dbfc7)
 
