@@ -1,60 +1,99 @@
-# Kubernetes를 활용한 애플리케이션 배포 
-Kubernetes를 활용하여 어플리케이션 배포 하는 법에 대해 논합니다.
+# Kubernetes를 활용한 애플리케이션 배포
 
-### [1] docker 이미지 만들기
-
-(1) 스냅샷 찍기 -> SpringApp-0.0.1-SNAPSHOT.jar
-![image](https://github.com/user-attachments/assets/018e88fd-e084-4b4b-aa63-b654acae1dc0)
-![image](https://github.com/user-attachments/assets/face382d-c305-42ed-b535-622e765bbe83)
-> Apply 후 Run 실행.
-
-![image](https://github.com/user-attachments/assets/24151abe-9b38-400a-a4f7-72d39d69eadc)
-> SpringApp/build/libs 경로에 SNAPSHOT 존재. 해당 파일을 작업할 폴더로 이동.
+이 문서는 Spring Boot 애플리케이션의 Docker 이미지 생성부터 Docker Hub 업로드 및 Minikube를 활용한 Kubernetes 클러스터 배포까지의 전체 과정을 설명합니다.
 
 
-(2) 스냅샷을 활용하여 docker image 만들기<br>
-docker image는 Dockerfile을 통해 생성할 수 있음.
+## 1단계: Docker 이미지 생성
+
+### 스냅샷 생성
+SpringBoot 애플리케이션의 스냅샷을 생성. `SpringApp-0.0.1-SNAPSHOT.jar` 파일이 `[App이름]/build/libs` 경로에 생성되어야 함.
+
+<img src="https://github.com/user-attachments/assets/018e88fd-e084-4b4b-aa63-b654acae1dc0" alt="snapshot" />
+
+![372706631-face382d-c305-42ed-b535-622e765bbe83](https://github.com/user-attachments/assets/b0c91965-7a81-4fcf-a4f7-0c4196cfc495)
+
+
+이렇게 생성된 파일을 작업 폴더로 이동.
+
+### Docker 이미지 빌드
+위의 스냅샷을 베이스로 Dockerfile 작성.
+
 ```dockerfile
 # 베이스 이미지 설정
 FROM openjdk:17-jdk-alpine
 
-# 컨테이너 내부에서 작업할 디렉토리
+# 컨테이너 내 작업 디렉토리 설정
 WORKDIR /app
 
-# 지정된 경로에서 JAR 파일을 컨테이너로 복사
+# JAR 파일을 컨테이너로 복사
 COPY ./SpringApp-0.0.1-SNAPSHOT.jar /app/SpringApp.jar
 
-# 애플리케이션이 실행될 포트 노출
+# 애플리케이션 포트 노출
 EXPOSE 8999
 
-# JAR 파일을 실행하기 위한 entrypoint
+# 애플리케이션 실행을 위한 엔트리포인트 설정
 ENTRYPOINT ["java", "-jar", "/app/SpringApp.jar"]
 ```
-(3) 확인 단계<br>
-```docker build -t springapp:latest .``` 로 이미지 빌드 후,
-```docker run -p 8999:8999 springapp:latest``` 정상 작동하는지 테스트
 
-(4) docker hub에 업로드 <br>
+### Docker 이미지 테스트
+Dockerfile이 있는 폴더에서 Dokcer 이미지 빌드.
+
+```bash
+docker build -t springapp:latest .
 ```
-docker tag springapp angielee123/springapp:1.0
-docker push angielee123/springapp:1.0
+
+실행 명령어로 작동 여부 확인.
+
+```bash
+docker run -p 8999:8999 springapp:latest
 ```
-![image (4)](https://github.com/user-attachments/assets/1c2f3862-6fcb-43a7-8006-73be7be0ba9f)
+
+### Docker Hub에 업로드
+로컬에서 테스트한 Docker 이미지를 Kubernetes에서 배포할 수 있도록 Docker Hub에 업로드.
+
+1. 이미지 태그 설정:
+   ```bash
+   docker tag springapp angielee123/springapp:1.0
+   ```
+
+2. Docker Hub에 푸시:
+   ```bash
+   docker push angielee123/springapp:1.0
+   ```
+
+![docker-hub-upload](https://github.com/user-attachments/assets/1c2f3862-6fcb-43a7-8006-73be7be0ba9f)
 
 ---
 
-### [2] Kubernetes 사용해서 배포하기
-test 목적이기에 minikube 사용
-```
-minikube start
-kubectl create deployment springapp --image=angielee123/springapp:1.0 --replicas=3
-kubectl expose deployment springapp --type=LoadBalancer --port=8999
-service/springapp exposed
-minikube tunnel 
-```
-tunnel 후 연결된 external ip:port 포트포워딩<br>
-![image (5)](https://github.com/user-attachments/assets/8ae6b58d-e038-4541-b39b-6077e95dbfc7)
+## 2단계: Kubernetes로 애플리케이션 배포
 
-결과물<br>
-![image (6)](https://github.com/user-attachments/assets/c139b8ee-862e-4750-932a-1ebc70e5d896)
+### Minikube 설정
+
+```bash
+minikube start
+```
+
+### 배포 생성
+
+```bash
+kubectl create deployment springapp --image=angielee123/springapp:1.0 --replicas=3
+```
+
+### 애플리케이션 노출
+클러스터 외부에서 접근을 허용하기 위해 `LoadBalancer` 서비스로 노출시키기.
+
+```bash
+kubectl expose deployment springapp --type=LoadBalancer --port=8999
+```
+
+### 애플리케이션 접근
+Minikube 터널을 생성하여 외부 IP 생성.
+
+```bash
+minikube tunnel
+```
+
+이후, 생성된 외부 IP와 포트를 포트포워딩하여 접근 가능하게 만들기.
+
+![kubernetes-deployment](https://github.com/user-attachments/assets/8ae6b58d-e038-4541-b39b-6077e95dbfc7)
 
