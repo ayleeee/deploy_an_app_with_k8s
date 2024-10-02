@@ -2,6 +2,10 @@
 
 이 문서는 Spring Boot 애플리케이션의 Docker 이미지 생성부터 Docker Hub 업로드 및 Minikube를 활용한 Kubernetes 클러스터 배포까지의 과정을 다룬다.
 
+## 사용 기술
+![Spring](https://img.shields.io/badge/Spring-6DB33F?style=for-the-badge&logo=spring&logoColor=white) ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
+![k8s](https://img.shields.io/badge/kubernetes-%23326ce5.svg?style=for-the-badge&logo=kubernetes&logoColor=white) ![]()
+
 
 ## 1단계: Docker 이미지 생성
 
