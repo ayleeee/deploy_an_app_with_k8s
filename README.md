@@ -97,7 +97,7 @@ Minikube 터널을 생성하여 외부 IP 생성.
 minikube tunnel
 ```
 
-이후, 생성된 외부 IP와 포트를 포트포워딩하여 접근 가능하게 만들기.
+이후, 생성된 외부 IP와 포트를 포트포워딩.
 ![image](https://github.com/user-attachments/assets/8eb66488-215a-42b5-95b4-bce90ed1a0ce)
 
 ### 결과물
